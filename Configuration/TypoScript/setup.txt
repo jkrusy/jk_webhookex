@@ -1,0 +1,11 @@
+plugin.tx_jkwebhookex {
+	settings {
+		webhooks {
+			1 {
+				type = slack
+				hook =
+				channel = #ra_webhookex
+			}
+		}
+	}
+}

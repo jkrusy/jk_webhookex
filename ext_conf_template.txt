@@ -1,0 +1,9 @@
+
+# cat=storagePids; type=string; label=Slack Webhook URLs (comma separated)
+slackWebhookUrl =
+
+# cat=storagePids; type=string; label=Slack Webhook Channels (comma separated)
+slackWebhookChannels =
+
+# cat=storagePids; type=string; label=Slack Webhook Username
+slackUserName = TYPO3 CMS Exception
