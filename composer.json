@@ -1,0 +1,12 @@
+{
+    "name": "JonathanKrusy/JkWebhookex",
+    "type": "typo3-cms-extension",
+    "description": "",
+    "homepage": "https://github.com/jkrusy/jk_webhookex",
+    "license": ["GPL-2.0+"],
+    "version": "1.0.0",
+    "require": {
+        "typo3/cms-core": "*",
+        "mcrumm/phlack": "dev-master"
+    }
+}
