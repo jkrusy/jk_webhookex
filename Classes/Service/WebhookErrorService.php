@@ -1,6 +1,7 @@
 <?php
 namespace JonathanKrusy\JkWebhookex\Service;
 use JonathanKrusy\JkWebhookex\Domain\Model\WebhookConfiguration;
+use JonathanKrusy\Webhook\Domain\IWebhookConfiguration;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /***************************************************************
@@ -30,17 +31,12 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  ***************************************************************/
 
 
-class WebhookErrorService {
+class WebhookErrorService extends \JonathanKrusy\Webhook\Service\WebhookErrorService {
 
 	/**
 	 * @var array
 	 */
 	protected $extConf = array();
-
-	/**
-	 * @var array
-	 */
-	protected $webhooks = array();
 
 	/**
 	 *
@@ -65,106 +61,8 @@ class WebhookErrorService {
 
 			$this->webhooks[] = $webhookConfiguration;
 		}
-	}
 
-	/**
-	 * @param \Exception $exception
-	 * @param WebhookConfiguration $webhookConfiguration
-	 * @param $link
-	 */
-	public function handleSlack(\Exception $exception, WebhookConfiguration $webhookConfiguration, $link) {
-		if($webhookConfiguration->getType() == WebhookConfiguration::WEBHOOK_SLACK) {
-			//hook address
-			$webhook = $webhookConfiguration->getWebhookUrl();
-
-			if(strlen($webhook) > 0) {
-				$ch = curl_init();
-
-				$stackTraceFields = array();
-				$stackTraceFields[] = array(
-					"title" => "Full Stack Trace",
-					"value" => $exception->getTraceAsString()
-				);
-
-				$payloadArray = array(
-					"username" => $this->extConf["slackUserName"] . " " . date("U"),
-					"icon_emoji" => ':warning:',
-					"text" => $exception->getMessage(),
-					"attachments" => array(
-						array(
-							"fallback" => "Details",
-							"color" => "#333333",
-							"fields" => array(
-								array(
-									"title" => ":page_with_curl: File",
-									"value" => $exception->getFile(),
-									"short" => TRUE
-								),
-								array(
-									"title" => ":paperclip: Line",
-									"value" => $exception->getLine(),
-									"short" => TRUE
-								),
-								array(
-									"title" => ":zap: Code",
-									"value" => $exception->getCode(),
-									"short" => TRUE
-								),
-								array(
-									"title" => ":link: Link",
-									"value" => ($link != '' ? "<" . $link . ">" : ''),
-									"short" => TRUE
-								)
-							)
-						),
-						array(
-							"fallback" => "Exception data",
-							"color" => "#" . $webhookConfiguration->getSlackColor(),
-							"fields" => $stackTraceFields
-						)
-					)
-				);
-				if($webhookConfiguration->getSlackChannel() !== "") {
-					$payloadArray["channel"] = $webhookConfiguration->getSlackChannel();
-				}
-				if($link != '') {
-					$payloadArray["username"] .= " (Web)";;
-				}
-
-				//set the url, number of POST vars, POST data
-				curl_setopt($ch,CURLOPT_URL, $webhook);
-				curl_setopt($ch,CURLOPT_POST, 1);
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-				curl_setopt($ch,CURLOPT_POSTFIELDS, array(
-					"payload" => json_encode($payloadArray)
-				));
-
-				//execute post
-				curl_exec($ch);
-
-				//close connection
-				curl_close($ch);
-			}
-		}
-	}
-
-	/**
-	 * @param WebhookConfiguration $webhook
-	 * @param \Exception $exception
-	 * @param string $link
-	 */
-	public function handleWebhook(WebhookConfiguration $webhook, \Exception $exception, $link = '') {
-		switch($webhook->getType()) {
-			case WebhookConfiguration::WEBHOOK_DEFAULT:
-				// TODO: Default Webhook
-				break;
-			case WebhookConfiguration::WEBHOOK_SLACK:
-				$this->handleSlack($exception, $webhook, $link);
-				break;
-			default:
-				// TODO: add hook
-				break;
-		}
+		$this->setSlackUserName($this->extConf["slackUserName"]);
 	}
 
 	/**

@@ -4,7 +4,7 @@ namespace JonathanKrusy\JkWebhookex\Domain\Model;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2014 Jonathan Krusy <j.krusy@raphael-gmbh.de>
+ *  (c) 2014 Jonathan Krusy <j.krusy@googlemail.de>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -27,12 +27,10 @@ namespace JonathanKrusy\JkWebhookex\Domain\Model;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use JonathanKrusy\Webhook\Domain\IWebhookConfiguration;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
-class WebhookConfiguration extends AbstractEntity {
-
-	const WEBHOOK_DEFAULT = 1;
-	const WEBHOOK_SLACK = 2;
+class WebhookConfiguration extends AbstractEntity implements IWebhookConfiguration {
 
 	/**
 	 * @var int
